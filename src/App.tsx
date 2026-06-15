@@ -1,351 +1,227 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 
-const leistungen = [
-  {
-    titel: 'SPS-Engineering',
-    text: 'Produktneutrale Softwarelösungen mit klarer, wartbarer Programmarchitektur – von der Spezifikation bis zur Serienreife.',
-  },
-  {
-    titel: 'Projektierung & Steuerung',
-    text: 'Begleitung über den gesamten Lebenszyklus: vom Konzept über das Engineering bis zur erfolgreichen Endabnahme.',
-  },
-  {
-    titel: 'Programmierung & Inbetriebnahme',
-    text: 'Durchgängige Unterstützung vor Ort und remote – termintreu, dokumentiert und auf maximale Anlagenverfügbarkeit ausgelegt.',
-  },
-  {
-    titel: 'Retrofit & Modernisierung',
-    text: 'Sichere Migration von Altsteuerungen auf aktuelle Plattformen – ohne unnötige Stillstandzeiten.',
-  },
-  {
-    titel: 'Schulung & Wissenstransfer',
-    text: 'Praxisnahe Schulungen für Ihr Team, damit Sie Ihre Anlagen langfristig selbstständig betreiben können.',
-  },
-  {
-    titel: 'Service & Wartung',
-    text: 'Verlässlicher Support, schnelle Reaktionszeiten und vorausschauende Wartung für einen störungsfreien Betrieb.',
-  },
-];
-
-const technologien = [
-  'SIMATIC STEP 7 Classic',
-  'TIA Portal',
-  'SIMATIC PCS 7',
-  'WinCC Unified',
-  'WinCC OA',
-  'OPC UA',
-  'PROFINET',
-  'PROFIBUS',
-];
-
-const schwerpunkte = [
-  {
-    titel: 'Unified Modernisierung',
-    text: 'Migration bestehender Visualisierungen auf WinCC Unified – zukunftssicher, webbasiert und plattformunabhängig bedienbar.',
-  },
-  {
-    titel: 'Cybersecurity',
-    text: 'Schutz industrieller Anlagen nach aktuellen Standards: segmentierte Netze, gehärtete Steuerungen und sichere Fernzugriffe.',
-  },
-  {
-    titel: 'SINEMA RC',
-    text: 'Sicherer Fernzugriff auf Maschinen weltweit über verschlüsselte Verbindungen – für schnellen Service ohne Anreise.',
-  },
-];
-
-const referenzen = [
-  {
-    kunde: 'EKZ',
-    projekt: 'Beleuchtungssteuerung',
-    kennzahl: '3 000 SPS-Steuerungen in Trafostationen',
-  },
-  {
-    kunde: 'Schweizer Post',
-    projekt: 'Mix-Mail Sortierzentrum',
-    kennzahl: '19 000 Sendungen pro Stunde',
-  },
-  {
-    kunde: 'DHL Gateway Basel',
-    projekt: 'Paketsortierung',
-    kennzahl: '10 000 Sendungen pro Stunde',
-  },
-  {
-    kunde: 'ARA Zermatt',
-    projekt: 'Membranbiologieanlage',
-    kennzahl: 'Grösste Anlage ihrer Art in der Schweiz',
-  },
-  {
-    kunde: 'SBB',
-    projekt: 'Modernisierung',
-    kennzahl: 'Migration kritischer Steuerungstechnik',
-  },
-  {
-    kunde: 'Equinix',
-    projekt: 'Rechenzentrum',
-    kennzahl: 'Infrastruktur- und Steuerungstechnik',
-  },
-];
-
-const navLinks = [
+const panels = [
+  { id: 'start', label: 'Start' },
   { id: 'leistungen', label: 'Leistungen' },
   { id: 'schwerpunkte', label: 'Schwerpunkte' },
-  { id: 'ueber-mich', label: 'Über mich' },
+  { id: 'ueber', label: 'Über mich' },
   { id: 'referenzen', label: 'Referenzen' },
   { id: 'kontakt', label: 'Kontakt' },
 ];
 
+const leistungen = [
+  { nr: '01', titel: 'SPS-Engineering', text: 'Produktneutrale Softwarearchitektur – klar, wartbar, serienreif.' },
+  { nr: '02', titel: 'Projektierung & Steuerung', text: 'Vom Konzept bis zur Endabnahme aus einer Hand.' },
+  { nr: '03', titel: 'Inbetriebnahme', text: 'Durchgängige Unterstützung vor Ort und remote.' },
+  { nr: '04', titel: 'Retrofit & Modernisierung', text: 'Sichere Migration von Altsteuerungen ohne lange Stillstände.' },
+  { nr: '05', titel: 'Schulung & Service', text: 'Wissenstransfer und verlässliche Wartung für Ihren Betrieb.' },
+];
+
+const schwerpunkte = [
+  { titel: 'Unified Modernisierung', text: 'Webbasierte Visualisierung mit WinCC Unified – zukunftssicher und plattformunabhängig.' },
+  { titel: 'Cybersecurity', text: 'Segmentierte Netze, gehärtete Steuerungen, sichere Fernzugriffe nach aktuellem Standard.' },
+  { titel: 'SINEMA RC', text: 'Verschlüsselter Fernzugriff auf Maschinen weltweit – Service ohne Anreise.' },
+];
+
+const technologien = ['STEP 7', 'TIA Portal', 'PCS 7', 'WinCC Unified', 'WinCC OA', 'OPC UA', 'PROFINET', 'PROFIBUS'];
+
+const referenzen = [
+  { kunde: 'EKZ', text: '3 000 SPS-Steuerungen in Trafostationen' },
+  { kunde: 'Schweizer Post', text: 'Sortierzentrum · 19 000 Sendungen / Stunde' },
+  { kunde: 'DHL Gateway Basel', text: '10 000 Sendungen / Stunde' },
+  { kunde: 'ARA Zermatt', text: 'Grösste Membranbiologieanlage der Schweiz' },
+  { kunde: 'SBB', text: 'Migration kritischer Steuerungstechnik' },
+  { kunde: 'Equinix', text: 'Infrastruktur- & Steuerungstechnik' },
+];
+
 function App() {
-  const [menuOffen, setMenuOffen] = useState(false);
-  const [gescrollt, setGescrollt] = useState(false);
+  const [aktiv, setAktiv] = useState(0);
+  const deckRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setGescrollt(window.scrollY > 24);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    const sektionen = Array.from(document.querySelectorAll<HTMLElement>('.panel'));
+    const beobachter = new IntersectionObserver(
+      (eintraege) => {
+        eintraege.forEach((e) => {
+          if (e.isIntersecting) {
+            const index = sektionen.indexOf(e.target as HTMLElement);
+            if (index >= 0) setAktiv(index);
+          }
+        });
+      },
+      { threshold: 0.55 }
+    );
+    sektionen.forEach((s) => beobachter.observe(s));
+    return () => beobachter.disconnect();
   }, []);
 
+  const springeZu = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className="site">
-      <header className={`nav ${gescrollt ? 'nav--scrolled' : ''}`}>
-        <div className="nav__inner">
-          <a href="#top" className="brand">
-            <span className="brand__mark">LA</span>
-            <span className="brand__name">
-              Lienhard <strong>Automation</strong>
-            </span>
-          </a>
+    <div className="shell">
+      {/* Fixierte Marke oben links */}
+      <a className="mark" href="#start" onClick={(e) => { e.preventDefault(); springeZu('start'); }}>
+        LIENHARD<span>AUTOMATION</span>
+      </a>
 
-          <nav className={`nav__links ${menuOffen ? 'nav__links--open' : ''}`}>
-            {navLinks.map((link) => (
-              <a key={link.id} href={`#${link.id}`} onClick={() => setMenuOffen(false)}>
-                {link.label}
-              </a>
-            ))}
-            <a className="nav__cta" href="#kontakt" onClick={() => setMenuOffen(false)}>
-              Anfrage senden
-            </a>
-          </nav>
+      {/* Panel-Zähler oben rechts */}
+      <div className="counter">
+        <strong>{String(aktiv + 1).padStart(2, '0')}</strong>
+        <span>/ {String(panels.length).padStart(2, '0')}</span>
+      </div>
 
+      {/* Punkt-Navigation rechts */}
+      <nav className="dots">
+        {panels.map((p, i) => (
           <button
-            className="nav__burger"
-            aria-label="Menü öffnen"
-            onClick={() => setMenuOffen((o) => !o)}
+            key={p.id}
+            className={`dots__item ${aktiv === i ? 'is-active' : ''}`}
+            onClick={() => springeZu(p.id)}
+            aria-label={p.label}
           >
-            <span />
-            <span />
-            <span />
+            <span className="dots__label">{p.label}</span>
+            <span className="dots__dot" />
           </button>
-        </div>
-      </header>
+        ))}
+      </nav>
 
-      <main id="top">
-        <section className="hero">
-          <div className="hero__inner">
-            <p className="hero__eyebrow">Automation. Engineering. Weltweit.</p>
-            <h1 className="hero__title">
-              Industrielle Steuerungstechnik,
-              <br />
-              auf die Sie sich verlassen können.
+      <div className="deck" ref={deckRef}>
+        {/* 01 — START */}
+        <section id="start" className="panel panel--dark">
+          <div className="panel__bg-grid" />
+          <div className="panel__inner hero">
+            <p className="kicker">Lienhard Automation GmbH · Zürich</p>
+            <h1 className="mega">
+              AUTOMATION.<br />
+              ENGINEERING.<br />
+              <span className="mega__accent">WELTWEIT.</span>
             </h1>
             <p className="hero__lead">
-              Lienhard Automation GmbH entwickelt massgeschneiderte Steuerungslösungen für den
-              Maschinen- und Anlagenbau – spezialisiert auf Siemens-Technologien, von der ersten
-              Idee bis zur erfolgreichen Inbetriebnahme.
+              Massgeschneiderte Steuerungstechnik für den Maschinen- und Anlagenbau.
+              Siemens-Spezialist mit über 25 Jahren Erfahrung auf fünf Kontinenten.
             </p>
-            <div className="hero__actions">
-              <a className="btn btn--primary" href="#kontakt">
-                Projekt anfragen
-              </a>
-              <a className="btn btn--ghost" href="#leistungen">
-                Leistungen entdecken
-              </a>
-            </div>
-
-            <dl className="hero__stats">
-              <div>
-                <dt>25+ Jahre</dt>
-                <dd>Erfahrung in der Automation</dd>
-              </div>
-              <div>
-                <dt>5 Kontinente</dt>
-                <dd>Internationale Projekte</dd>
-              </div>
-              <div>
-                <dt>Weltweit</dt>
-                <dd>Service & Fernzugriff</dd>
-              </div>
-            </dl>
+            <button className="scroll-hint" onClick={() => springeZu('leistungen')}>
+              Scrollen <span className="scroll-hint__arrow">↓</span>
+            </button>
           </div>
         </section>
 
-        <section id="leistungen" className="section">
-          <div className="section__head">
-            <p className="section__eyebrow">Leistungen</p>
-            <h2>Alles aus einer Hand</h2>
-            <p className="section__intro">
-              Von der Projektierung bis zur Wartung – ein durchgängiger Partner für Ihre
-              Automatisierungsprojekte.
-            </p>
-          </div>
-          <div className="grid grid--3">
-            {leistungen.map((item) => (
-              <article key={item.titel} className="card">
-                <h3>{item.titel}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="schwerpunkte" className="section section--alt">
-          <div className="section__head">
-            <p className="section__eyebrow">Schwerpunkte</p>
-            <h2>Spezialisiert auf das, was zählt</h2>
-            <p className="section__intro">
-              Moderne Themen, die Ihre Anlagen sicher, bedienbar und zukunftsfähig machen.
-            </p>
-          </div>
-          <div className="grid grid--3">
-            {schwerpunkte.map((item) => (
-              <article key={item.titel} className="card card--accent">
-                <h3>{item.titel}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="tech">
-            <h3>Technologien</h3>
-            <ul className="tech__list">
-              {technologien.map((t) => (
-                <li key={t}>{t}</li>
+        {/* 02 — LEISTUNGEN */}
+        <section id="leistungen" className="panel panel--blue">
+          <div className="panel__inner">
+            <header className="panel__head">
+              <span className="panel__no">02</span>
+              <h2 className="panel__title">Leistungen</h2>
+            </header>
+            <ul className="leist">
+              {leistungen.map((l) => (
+                <li key={l.nr} className="leist__row">
+                  <span className="leist__nr">{l.nr}</span>
+                  <span className="leist__titel">{l.titel}</span>
+                  <span className="leist__text">{l.text}</span>
+                </li>
               ))}
             </ul>
           </div>
         </section>
 
-        <section id="ueber-mich" className="section">
-          <div className="about">
-            <div className="about__text">
-              <p className="section__eyebrow">Über mich</p>
-              <h2>Ernesto Lienhard</h2>
-              <p>
-                Als Techniker HF Automation mit über 25 Jahren Erfahrung habe ich Projekte auf fünf
-                Kontinenten realisiert – von der Schweiz bis in die entlegensten Industriestandorte.
-                Über 10 Jahre internationale Projekterfahrung bedeuten für Sie: pragmatische
-                Lösungen, klare Kommunikation und Technik, die im Feld zuverlässig läuft.
-              </p>
-              <p>
-                Mein Anspruch ist eine saubere, wartbare und herstellerneutrale Programmarchitektur,
-                die auch nach Jahren noch verständlich und erweiterbar ist.
-              </p>
+        {/* 03 — SCHWERPUNKTE */}
+        <section id="schwerpunkte" className="panel panel--light">
+          <div className="panel__inner">
+            <header className="panel__head">
+              <span className="panel__no panel__no--ink">03</span>
+              <h2 className="panel__title panel__title--ink">Schwerpunkte</h2>
+            </header>
+            <div className="focus">
+              {schwerpunkte.map((s) => (
+                <article key={s.titel} className="focus__item">
+                  <h3>{s.titel}</h3>
+                  <p>{s.text}</p>
+                </article>
+              ))}
             </div>
-            <div className="about__card">
-              <span className="about__avatar">EL</span>
-              <p className="about__role">Geschäftsführer & Engineering</p>
-              <ul>
-                <li>Techniker HF Automation</li>
-                <li>25+ Jahre Praxiserfahrung</li>
-                <li>Internationale Inbetriebnahmen</li>
-                <li>Siemens-Spezialist</li>
-              </ul>
+            <div className="chips">
+              {technologien.map((t) => (
+                <span key={t} className="chip">{t}</span>
+              ))}
             </div>
           </div>
         </section>
 
-        <section id="referenzen" className="section section--alt">
-          <div className="section__head">
-            <p className="section__eyebrow">Referenzen</p>
-            <h2>Projekte, die für sich sprechen</h2>
-            <p className="section__intro">
-              Eine Auswahl realisierter Anlagen für renommierte Auftraggeber.
-            </p>
-          </div>
-          <div className="grid grid--3">
-            {referenzen.map((ref) => (
-              <article key={ref.kunde + ref.projekt} className="ref">
-                <span className="ref__kunde">{ref.kunde}</span>
-                <h3>{ref.projekt}</h3>
-                <p>{ref.kennzahl}</p>
-              </article>
-            ))}
+        {/* 04 — ÜBER MICH */}
+        <section id="ueber" className="panel panel--amber">
+          <div className="panel__inner ueber">
+            <div className="ueber__left">
+              <span className="ueber__avatar">EL</span>
+            </div>
+            <div className="ueber__right">
+              <span className="panel__no panel__no--ink">04</span>
+              <h2 className="panel__title panel__title--ink">Ernesto Lienhard</h2>
+              <p className="ueber__role">Geschäftsführer · Techniker HF Automation</p>
+              <p className="ueber__bio">
+                Über 25 Jahre Praxis, mehr als 10 Jahre internationale Projekterfahrung – realisiert
+                auf fünf Kontinenten. Mein Anspruch: saubere, herstellerneutrale Programmierung, die
+                auch nach Jahren verständlich, wartbar und erweiterbar bleibt.
+              </p>
+            </div>
           </div>
         </section>
 
-        <section id="kontakt" className="section">
-          <div className="kontakt">
-            <div className="kontakt__text">
-              <p className="section__eyebrow">Kontakt</p>
-              <h2>Sprechen wir über Ihr Projekt</h2>
-              <p>
-                Ob neue Anlage, Modernisierung oder Service – ich freue mich auf Ihre Anfrage und
-                melde mich umgehend zurück.
-              </p>
-              <ul className="kontakt__liste">
-                <li>
-                  <span>Telefon</span>
-                  <a href="tel:+41797011821">+41 79 701 18 21</a>
-                </li>
-                <li>
-                  <span>E-Mail</span>
-                  <a href="mailto:info@lienhard-automation.ch">info@lienhard-automation.ch</a>
-                </li>
-                <li>
-                  <span>Adresse</span>
-                  <a
-                    href="https://maps.google.com/?q=Freilagerstrasse+71+8047+Zürich"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Freilagerstrasse 71, 8047 Zürich
-                  </a>
-                </li>
-                <li>
-                  <span>Einsatzgebiet</span>
-                  <span className="kontakt__plain">Schweiz &amp; weltweit</span>
-                </li>
-              </ul>
+        {/* 05 — REFERENZEN */}
+        <section id="referenzen" className="panel panel--dark">
+          <div className="panel__bg-grid" />
+          <div className="panel__inner">
+            <header className="panel__head">
+              <span className="panel__no">05</span>
+              <h2 className="panel__title">Referenzen</h2>
+            </header>
+            <div className="refs">
+              {referenzen.map((r) => (
+                <article key={r.kunde} className="refs__item">
+                  <h3>{r.kunde}</h3>
+                  <p>{r.text}</p>
+                </article>
+              ))}
             </div>
+          </div>
+        </section>
 
-            <div className="kontakt__cta">
-              <h3>Direkt anfragen</h3>
-              <p>Schreiben Sie mir – ich antworte in der Regel innerhalb eines Werktags.</p>
+        {/* 06 — KONTAKT */}
+        <section id="kontakt" className="panel panel--blue">
+          <div className="panel__inner kontakt">
+            <header className="panel__head">
+              <span className="panel__no">06</span>
+              <h2 className="panel__title">Kontakt</h2>
+            </header>
+            <p className="kontakt__claim">Sprechen wir über Ihr Projekt.</p>
+            <div className="kontakt__grid">
+              <a className="kontakt__card" href="tel:+41797011821">
+                <span>Telefon</span>
+                <strong>+41 79 701 18 21</strong>
+              </a>
+              <a className="kontakt__card" href="mailto:info@lienhard-automation.ch">
+                <span>E-Mail</span>
+                <strong>info@lienhard-automation.ch</strong>
+              </a>
               <a
-                className="btn btn--primary btn--block"
-                href="mailto:info@lienhard-automation.ch?subject=Projektanfrage%20Lienhard%20Automation"
+                className="kontakt__card"
+                href="https://maps.google.com/?q=Freilagerstrasse+71+8047+Zürich"
+                target="_blank"
+                rel="noreferrer"
               >
-                E-Mail schreiben
-              </a>
-              <a className="btn btn--ghost btn--block" href="tel:+41797011821">
-                Jetzt anrufen
+                <span>Adresse</span>
+                <strong>Freilagerstrasse 71, 8047 Zürich</strong>
               </a>
             </div>
+            <p className="kontakt__foot">
+              © {new Date().getFullYear()} Lienhard Automation GmbH · Schweiz &amp; weltweit
+            </p>
           </div>
         </section>
-      </main>
-
-      <footer className="footer">
-        <div className="footer__inner">
-          <div className="footer__brand">
-            <span className="brand__mark">LA</span>
-            <div>
-              <strong>Lienhard Automation GmbH</strong>
-              <p>Automation. Engineering. Weltweit.</p>
-            </div>
-          </div>
-          <div className="footer__meta">
-            <p>Freilagerstrasse 71, 8047 Zürich, Schweiz</p>
-            <p>
-              <a href="tel:+41797011821">+41 79 701 18 21</a> ·{' '}
-              <a href="mailto:info@lienhard-automation.ch">info@lienhard-automation.ch</a>
-            </p>
-            <p className="footer__copy">
-              © {new Date().getFullYear()} Lienhard Automation GmbH · Alle Rechte vorbehalten
-            </p>
-          </div>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 }
