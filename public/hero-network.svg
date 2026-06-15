@@ -1,0 +1,61 @@
+<svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vernetzte Automation weltweit">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#ffd9a0" stop-opacity="0.9"/>
+      <stop offset="55%" stop-color="#f0a233" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#d2592e" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="globe" x1="20%" y1="10%" x2="80%" y2="95%">
+      <stop offset="0%" stop-color="#f6b25a"/>
+      <stop offset="55%" stop-color="#e2683c"/>
+      <stop offset="100%" stop-color="#a83a1f"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe6b8"/>
+      <stop offset="100%" stop-color="#f0a233"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="300" cy="290" r="270" fill="url(#glow)"/>
+
+  <!-- Globe -->
+  <circle cx="300" cy="290" r="160" fill="url(#globe)"/>
+  <g stroke="#fff4e2" stroke-opacity="0.5" stroke-width="1.6" fill="none">
+    <ellipse cx="300" cy="290" rx="160" ry="55"/>
+    <ellipse cx="300" cy="290" rx="160" ry="110"/>
+    <ellipse cx="300" cy="290" rx="55" ry="160"/>
+    <ellipse cx="300" cy="290" rx="110" ry="160"/>
+    <line x1="140" y1="290" x2="460" y2="290"/>
+    <line x1="300" y1="130" x2="300" y2="450"/>
+  </g>
+
+  <!-- Orbit -->
+  <ellipse cx="300" cy="290" rx="245" ry="120" stroke="url(#line)" stroke-width="1.6" stroke-opacity="0.7" fill="none" transform="rotate(-22 300 290)"/>
+
+  <!-- Connection lines -->
+  <g stroke="url(#line)" stroke-width="1.8" stroke-opacity="0.85" fill="none">
+    <path d="M300 70 L300 130"/>
+    <path d="M520 215 L455 245"/>
+    <path d="M95 360 L150 335"/>
+    <path d="M420 470 L385 415"/>
+    <path d="M170 110 L225 165"/>
+  </g>
+
+  <!-- Nodes -->
+  <g fill="#fff4e2">
+    <circle cx="300" cy="70" r="9"/>
+    <circle cx="520" cy="215" r="7"/>
+    <circle cx="95" cy="360" r="8"/>
+    <circle cx="420" cy="470" r="7"/>
+    <circle cx="170" cy="110" r="6"/>
+  </g>
+  <g fill="#d2592e">
+    <circle cx="300" cy="70" r="4"/>
+    <circle cx="520" cy="215" r="3"/>
+    <circle cx="95" cy="360" r="3.5"/>
+    <circle cx="420" cy="470" r="3"/>
+  </g>
+
+  <!-- Highlight -->
+  <ellipse cx="245" cy="225" rx="55" ry="32" fill="#fff4e2" fill-opacity="0.28" transform="rotate(-30 245 225)"/>
+</svg>
