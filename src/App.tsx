@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Message, supabase } from './supabaseClient';
+import { Message, supabase, supabaseEnvMissing } from './supabaseClient';
 import './App.css';
 
 function App() {
@@ -7,6 +7,23 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  if (supabaseEnvMissing) {
+    return (
+      <div className="app">
+        <header>
+          <h1>Supabase Portal</h1>
+        </header>
+        <section className="form-card">
+          <p className="error">
+            Supabase environment variables are missing. Please set
+            <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code>
+            in your Vercel project settings and redeploy.
+          </p>
+        </section>
+      </div>
+    );
+  }
 
   useEffect(() => {
     fetchMessages();
