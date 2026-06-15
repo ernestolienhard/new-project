@@ -10,6 +10,13 @@ const leistungen = [
   { titel: 'Service & Wartung', text: 'Verlässlicher Support und vorausschauende Wartung für den Dauerbetrieb.' },
 ];
 
+const galerie = [
+  { src: '/img/hall.jpg', titel: 'Reinraum-Produktion', text: 'Durchgängige Steuerung kompletter Fertigungslinien.' },
+  { src: '/img/control.jpg', titel: 'Leitstand & Visualisierung', text: 'Übersicht und Bedienung in einer zentralen Oberfläche.' },
+  { src: '/img/engineer.jpg', titel: 'Inbetriebnahme vor Ort', text: 'Engineering direkt an der Anlage – weltweit.' },
+  { src: '/img/bottling.png', titel: 'Verpackungs- & Abfülltechnik', text: 'Präzise Steuerung schneller Produktionsabläufe.' },
+];
+
 const schwerpunkte = [
   { titel: 'Unified Modernisierung', text: 'Webbasierte Visualisierung mit WinCC Unified – zukunftssicher und plattformunabhängig.' },
   { titel: 'Cybersecurity', text: 'Segmentierte Netze, gehärtete Steuerungen und sichere Fernzugriffe nach aktuellem Standard.' },
@@ -27,14 +34,22 @@ const referenzen = [
   { kunde: 'Equinix', text: 'Infrastruktur- und Steuerungstechnik' },
 ];
 
+const kundenLogos = [
+  { name: 'Roche', file: 'roche' },
+  { name: 'Merck', file: 'merck' },
+  { name: 'Boehringer Ingelheim', file: 'boehringer' },
+  { name: 'Hapa', file: 'hapa' },
+  { name: 'Rittmeyer', file: 'rittmeyer' },
+  { name: 'Romaco', file: 'romaco' },
+  { name: 'Schlatter', file: 'schlatter' },
+  { name: 'Italmex', file: 'italmex' },
+];
+
 function Wave({ from, to, flip = false }: { from: string; to: string; flip?: boolean }) {
   return (
     <div className="wave" style={{ background: from }} aria-hidden>
       <svg viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ transform: flip ? 'scaleX(-1)' : 'none' }}>
-        <path
-          d="M0,64 C240,120 480,0 720,40 C960,80 1200,120 1440,56 L1440,120 L0,120 Z"
-          fill={to}
-        />
+        <path d="M0,64 C240,120 480,0 720,40 C960,80 1200,120 1440,56 L1440,120 L0,120 Z" fill={to} />
       </svg>
     </div>
   );
@@ -52,7 +67,7 @@ function App() {
           }
         });
       },
-      { threshold: 0.18 }
+      { threshold: 0.16 }
     );
     ziele.forEach((z) => io.observe(z));
     return () => io.disconnect();
@@ -60,7 +75,6 @@ function App() {
 
   return (
     <div className="page">
-      {/* schwebende, weiche Farbverläufe über die ganze Seite */}
       <div className="orbs" aria-hidden>
         <span className="orb orb--1" />
         <span className="orb orb--2" />
@@ -70,10 +84,11 @@ function App() {
 
       <header className="topbar">
         <a className="brand" href="#start">
-          Lienhard <span>Automation</span>
+          <img src="/img/logo.png" alt="Lienhard Automation" />
         </a>
         <nav className="topnav">
           <a href="#leistungen">Leistungen</a>
+          <a href="#einblicke">Einblicke</a>
           <a href="#schwerpunkte">Schwerpunkte</a>
           <a href="#ueber">Über mich</a>
           <a href="#referenzen">Referenzen</a>
@@ -96,11 +111,14 @@ function App() {
             </p>
             <div className="hero__actions">
               <a className="btn btn--solid" href="#kontakt">Projekt anfragen</a>
-              <a className="btn btn--soft" href="#leistungen">Leistungen ansehen</a>
+              <a className="btn btn--soft" href="#einblicke">Einblicke ansehen</a>
             </div>
           </div>
           <div className="hero__art reveal">
-            <img src="/hero-network.svg" alt="Weltweit vernetzte Automatisierung" />
+            <div className="frame frame--hero">
+              <img src="/img/hero.jpg" alt="Industrielle Produktionsanlage" />
+            </div>
+            <div className="frame__badge">Swiss Engineering</div>
           </div>
         </section>
 
@@ -127,8 +145,30 @@ function App() {
 
         <Wave from="transparent" to="#f3e0c6" />
 
+        {/* EINBLICKE / GALERIE */}
+        <section id="einblicke" className="band band--warm">
+          <div className="band__head reveal">
+            <p className="eyebrow eyebrow--center">Einblicke</p>
+            <h2>Echte Anlagen, echte Ergebnisse</h2>
+            <p className="sub">Ausschnitte aus realisierten Projekten rund um die Welt.</p>
+          </div>
+          <div className="gallery">
+            {galerie.map((g, i) => (
+              <figure className="shot reveal" style={{ transitionDelay: `${i * 80}ms` }} key={g.titel}>
+                <img src={g.src} alt={g.titel} loading="lazy" />
+                <figcaption>
+                  <strong>{g.titel}</strong>
+                  <span>{g.text}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
+        <Wave from="#f3e0c6" to="transparent" flip />
+
         {/* SCHWERPUNKTE */}
-        <section id="schwerpunkte" className="band band--warm">
+        <section id="schwerpunkte" className="band">
           <div className="band__head reveal">
             <p className="eyebrow eyebrow--center">Schwerpunkte</p>
             <h2>Spezialisiert auf das, was zählt</h2>
@@ -149,12 +189,12 @@ function App() {
           </div>
         </section>
 
-        <Wave from="#f3e0c6" to="transparent" flip />
-
         {/* ÜBER MICH */}
         <section id="ueber" className="about">
           <div className="about__art reveal">
-            <img src="/about-art.svg" alt="Engineering und Steuerungstechnik" />
+            <div className="frame">
+              <img src="/img/control.jpg" alt="Engineering an der Steuerung" />
+            </div>
             <span className="about__badge">EL</span>
           </div>
           <div className="about__text reveal">
@@ -188,10 +228,16 @@ function App() {
               </article>
             ))}
           </div>
+
+          <p className="logos__title reveal">Im Einsatz für</p>
+          <div className="logos reveal">
+            {kundenLogos.map((k) => (
+              <img className="logos__item" key={k.file} src={`/img/logos/${k.file}.png`} alt={k.name} loading="lazy" />
+            ))}
+          </div>
         </section>
       </main>
 
-      {/* KONTAKT / FOOTER fließt aus warmem Verlauf */}
       <Wave from="transparent" to="#241710" />
       <footer id="kontakt" className="contact">
         <div className="contact__inner reveal">
