@@ -52,44 +52,68 @@ function App() {
   return (
     <div className="app">
       <header className="hero">
-        <p className="eyebrow">Vercel-ready portal</p>
-        <h1>Your new homepage is live</h1>
+        <p className="eyebrow">Sinema RC</p>
+        <h1>Steuere deine Kino- und Medienproduktion</h1>
         <p>
-          This landing page is built for Vercel and includes an optional Supabase message portal.
-          If you set <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code> in Vercel,
-          the portal becomes active immediately.
+          Sinema RC ist die schlanke Weboberfläche für Fernsteuerung, Szenenmanagement und Medienautomation.
+          Ideal für Filmproduktionen, Streaming-Studios und kreative Teams, die schnell und verlässlich arbeiten wollen.
         </p>
       </header>
 
       <section className="intro-grid">
         <div>
-          <h2>Instant deploy</h2>
-          <p>Vercel can serve this site immediately with static content, so you’ll see a homepage right away.</p>
+          <h2>Alles in einer Übersicht</h2>
+          <p>Behalte Kameras, Licht und Mediensteuerung in einer zentralen Oberfläche im Blick.</p>
         </div>
         <div>
-          <h2>Supabase ready</h2>
-          <p>Once your environment variables are configured in Vercel, the portal connects to Supabase automatically.</p>
+          <h2>Automatisierte Abläufe</h2>
+          <p>Starte Szenen, wechsle Sets und synchronisiere Ausrüstung per Knopfdruck.</p>
         </div>
+      </section>
+
+      <section className="form-card">
+        <h2>Was ist Sinema RC?</h2>
+        <p>
+          Sinema RC unterstützt die Produktion mit einer modernen Web-Plattform, die sowohl manuelle Steuerung als auch automatische Workflow-Skripte ermöglicht.
+          So kannst du Fokus auf die kreative Arbeit legen und gleichzeitig technische Abläufe sicher steuern.
+        </p>
+        <ul>
+          <li>Fernsteuerung für Mediengeräte und Produktionsabläufe</li>
+          <li>Direkter Zugriff auf Szenen, Presets und Live-Parameter</li>
+          <li>Integration mit modernen Cloud-Diensten wie Supabase</li>
+        </ul>
+      </section>
+
+      <section className="portal-card">
+        <h2>Sinema RC Portal</h2>
+        <p>
+          Wenn Supabase konfiguriert ist, wird das Kontrollportal aktiv und speichert Nachrichten, Kommentare oder Produktionshinweise direkt in deiner Datenbank.
+        </p>
+        <div className="env-list">
+          <code>VITE_SUPABASE_URL</code>
+          <code>VITE_SUPABASE_ANON_KEY</code>
+        </div>
+        <p>Füge diese Werte in den Vercel-Projekteinstellungen ein, damit das Portal vollständig funktioniert.</p>
       </section>
 
       {portalAvailable ? (
         <section className="form-card">
-          <h2>Supabase message portal</h2>
+          <h2>Feedback senden</h2>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Enter a message to save to Supabase"
+            placeholder="Gib hier eine Nachricht ein..."
             rows={4}
           />
           <button onClick={addMessage} disabled={loading}>
-            {loading ? 'Saving...' : 'Save message'}
+            {loading ? 'Speichern...' : 'Nachricht speichern'}
           </button>
           {error ? <p className="error">{error}</p> : null}
 
           <div className="messages-card">
-            <h3>Recent messages</h3>
+            <h3>Letzte Einträge</h3>
             {loading && !messages.length ? (
-              <p>Loading messages…</p>
+              <p>Lade Einträge…</p>
             ) : messages.length ? (
               <ul>
                 {messages.map((message) => (
@@ -100,23 +124,11 @@ function App() {
                 ))}
               </ul>
             ) : (
-              <p>No messages yet.</p>
+              <p>Noch keine Einträge vorhanden.</p>
             )}
           </div>
         </section>
-      ) : (
-        <section className="portal-card">
-          <h2>Portal configuration</h2>
-          <p>
-            Supabase is not configured yet. Your homepage is still visible on Vercel, and the portal will become active once these env vars are set in your Vercel project:
-          </p>
-          <div className="env-list">
-            <code>VITE_SUPABASE_URL</code>
-            <code>VITE_SUPABASE_ANON_KEY</code>
-          </div>
-          <p>Deploy now, then add the values in Vercel. The site remains a working landing page for visitors.</p>
-        </section>
-      )}
+      ) : null}
     </div>
   );
 }
