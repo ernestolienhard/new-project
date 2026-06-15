@@ -8,7 +8,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (supabaseEnvMissing) {
+  if (supabaseEnvMissing || !supabase) {
     return (
       <div className="app">
         <header>
@@ -25,13 +25,15 @@ function App() {
     );
   }
 
+  const client = supabase;
+
   useEffect(() => {
     fetchMessages();
   }, []);
 
   async function fetchMessages() {
     setLoading(true);
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from('portal_messages')
       .select('*')
       .order('created_at', { ascending: false })
@@ -48,7 +50,7 @@ function App() {
   async function addMessage() {
     if (!content.trim()) return;
     setLoading(true);
-    const { error } = await supabase.from('portal_messages').insert({ content: content.trim() });
+    const { error } = await client.from('portal_messages').insert({ content: content.trim() });
     if (error) {
       setError(error.message);
     } else {
