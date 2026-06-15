@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
-import { supabase } from './supabaseClient';
+import { Message, supabase } from './supabaseClient';
 import './App.css';
-
-type Message = {
-  id: number;
-  created_at: string;
-  content: string;
-};
 
 function App() {
   const [content, setContent] = useState('');
@@ -21,7 +15,7 @@ function App() {
   async function fetchMessages() {
     setLoading(true);
     const { data, error } = await supabase
-      .from<Message>('portal_messages')
+      .from('portal_messages')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(10);
